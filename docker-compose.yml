@@ -1,0 +1,61 @@
+---
+version: '3.7'
+services:
+  proxy:
+    image: openresty/openresty:1.19.9.1-1-alpine-fat
+    volumes:
+      - ./proxy/conf.d/:/etc/nginx/conf.d/
+      - ./proxy/logs/:/usr/local/openresty/nginx/logs/
+    ports:
+      - "80:80"
+    command: ['/usr/local/openresty/bin/openresty','-g','daemon off;']
+  web1:
+    image: openresty/openresty:1.19.9.1-1-alpine-fat
+    restart: always
+    volumes:
+      - ./web1/conf.d/:/etc/nginx/conf.d/
+      - ./web1/logs/:/usr/local/openresty/nginx/logs/
+      - ./www/:/www/
+    expose:
+      - "80"
+    command: 
+    ['/usr/local/openresty/bin/openresty','-g','daemon off;']
+  db:
+      image: "mysql:5.7.25"
+      ports: 
+        - "3306:3306"
+      restart: always
+      volumes:
+        - ./mysql/data/:/var/lib/mysql/
+        - ./mysql/conf.d/:/etc/mysql/conf.d/
+        - ./mysql/tmp/:/tmp/
+        - ./mysql/var/run/mysqld/:/var/run/mysqld/
+      environment: 
+        MYSQL_ROOT_PASSWORD: 111111
+        MYSQL_USER: duanlujian
+        MYSQL_PASSWORD: 111111
+  redis:
+      image: "redis:5.0.8-alpine"
+      ports: 
+        - "6379:6379"
+      restart: always
+      volumes:
+        - ./redis/data/:/data/
+        - ./redis/conf/:/usr/local/etc/redis/
+      command: [
+      "redis-server",
+      "/usr/local/etc/redis/redis.conf",
+      "--daemonize no",
+      "--bind 0.0.0.0",
+      "--appendonly yes",
+      # "--save \"\"",
+      "--aof-use-rdb-preamble yes"
+      ]
+  mongo:
+      image: "mongo"
+      restart: always
+      ports:
+          - "27017:27017"
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: yhHlZ1dQ8AjPtWgm
