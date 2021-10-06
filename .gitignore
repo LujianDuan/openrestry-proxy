@@ -1,0 +1,6 @@
+/www/
+/web1/logs/
+/web2/logs/
+/mysql/data/
+/redis/data/
+proxy/logs/
